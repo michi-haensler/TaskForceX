@@ -13,8 +13,6 @@
 - **Chat-Funktion**  
   Nach einem Match können Schüler direkt miteinander chatten, Dateien wie Notizen austauschen und sich zu Lernmeetings verabreden.
 
-- **Gruppen-Suche & Events**  
-  Schüler können Gruppen für Lernfächer oder Freizeitaktivitäten erstellen und Events wie Lernmeetings oder Pausenveranstaltungen planen.
 
 ## 🛠️ Technologien
 
@@ -23,16 +21,16 @@
   - JWT für Authentifizierung
 
 - **Frontend:**  
-  - HTML, CSS, JavaScript (mit Frameworks wie React oder Vue.js)
+  - HTML, CSS, JavaScript
 
 - **Datenbank:**  
-  - PostgreSQL oder MySQL für die Speicherung von Benutzerdaten und Matching-Informationen (JPA für ORM)
+  - MySQL für die Speicherung von Benutzerdaten und Matching-Informationen (JPA für ORM)
 
 - **Matchmaking-Algorithmus:**  
   - Algorithmus, der Benutzer basierend auf Interessen, Klassen und Fächern vorschlägt.
 
 - **Chat & Messaging:**  
-  - WebSocket für Echtzeit-Chat zwischen Nutzern.
+  - WebSocket für Echtzeit-Chat oder per snapchat 
 
 ## 📅 Roadmap
 
