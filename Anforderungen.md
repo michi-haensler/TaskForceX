@@ -37,18 +37,7 @@ Das Projekt umfasst folgende Hauptkomponenten:
   - Eine separate Match-Übersicht mit aktiven und vergangenen Matches.
   - Möglichkeit, Matches nach Relevanz zu sortieren.
 
-### 2.3 Chat-Funktion
-- **Nachrichtenversand zwischen gematchten Nutzern**:
-  - Sofortige Textnachrichten mit Lesebestätigungen.
-  - Speicherung des Chatverlaufs für spätere Referenzen.
-- **Dateiaustausch**:
-  - Hochladen und Teilen von Dokumenten, Präsentationen und Notizen.
-  - Vorschau für hochgeladene Dateien innerhalb des Chats.
-- **Gruppen-Chats für gemeinsame Lernmeetings**:
-  - Möglichkeit, Gruppenchats mit mehreren Teilnehmern zu erstellen.
-  - Kalenderintegration zur Planung gemeinsamer Lernzeiten.
-
-### 2.4 Gruppen & Events
+### 2.3 Gruppen & Events
 - **Erstellung von Lerngruppen**:
   - Gruppen können öffentlich oder privat sein.
   - Admin-Funktionen zur Verwaltung der Gruppenmitglieder.
@@ -58,7 +47,7 @@ Das Projekt umfasst folgende Hauptkomponenten:
 - **Beitreten zu Gruppen**:
   - Nutzer können Gruppenanfragen stellen oder offene Gruppen beitreten.
 
-### 2.5 Sicherheit
+### 2.4 Sicherheit
 - **Authentifizierung über JWT**: Sicheres Token-basiertes Login-System.
 - **HTTPS-Verschlüsselung**: Alle Datenübertragungen erfolgen über sichere Protokolle.
 - **Profildaten nur für registrierte Nutzer sichtbar**: Einschränkung der Sichtbarkeit für nicht eingeloggte Nutzer.
