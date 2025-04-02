@@ -95,14 +95,3 @@ Das Projekt umfasst folgende Hauptkomponenten:
 | Sicherheitslücken im Login-System | Mittel | Hoch | JWT-Auth, HTTPS nutzen |
 | Verzögerung durch Bugs | Mittel | Mittel | Agile Entwicklung mit Tests |
 
----
-## 6. Zeitplan (4 Monate)
-| Woche | Aufgabe |
-|--------|---------|
-| 1-2    | Planung & UI-Design |
-| 3-5    | Backend-Entwicklung |
-| 6-8    | Frontend-Entwicklung |
-| 9-11   | Integration & Testing |
-| 12-16  | Optimierung & Deployment |
-
----
