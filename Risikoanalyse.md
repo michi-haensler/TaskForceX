@@ -9,4 +9,3 @@
 | Performanceprobleme bei Matching/Chat          | Gering             | Mittel           | Testdaten nutzen, Lasttests durchführen, Optimierungen einplanen        |
 | Datenschutzverstöße                            | Gering             | Hoch             | DSGVO-Schulung, Datenschutzerklärung, Pseudonymisierung von Daten       |
 | Teamkommunikation & Motivation                 | Mittel             | Mittel           | Wöchentliche Meetings, Aufgabenverteilung, klare Rollen                 |
-| Technische Komplexität bei WebSockets          | Mittel             | Mittel           | Tutorials zu WebSockets, ggf. vereinfachte Chat-Lösung zum Start        |
