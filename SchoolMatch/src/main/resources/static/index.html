@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SchoolMatch Auth</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
+    .container { max-width: 400px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    h2 { text-align: center; }
+    form { display: flex; flex-direction: column; }
+    label { margin: 10px 0 5px; }
+    input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+    button { margin: 15px 0; padding: 10px; border: none; border-radius: 4px; background: #007bff; color: white; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    .message { margin-top: 10px; color: green; }
+    .error { margin-top: 10px; color: red; }
+    #userList { margin-top: 20px; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>SchoolMatch Anmeldung</h2>
+
+  <!-- Tabs -->
+  <div style="text-align:center; margin-bottom:20px;">
+    <button id="tab-register">Registrieren</button>
+    <button id="tab-login">Anmelden</button>
+  </div>
+
+  <!-- Registration Form -->
+  <form id="form-register">
+    <label for="reg-email">E-Mail</label>
+    <input type="email" id="reg-email" required />
+    <label for="reg-password">Passwort</label>
+    <input type="password" id="reg-password" minlength="6" required />
+    <button type="submit">Registrieren</button>
+    <div id="reg-message" class="message"></div>
+    <div id="reg-error" class="error"></div>
+  </form>
+
+  <!-- Login Form -->
+  <form id="form-login" style="display:none;">
+    <label for="login-email">E-Mail</label>
+    <input type="email" id="login-email" required />
+    <label for="login-password">Passwort</label>
+    <input type="password" id="login-password" required />
+    <button type="submit">Anmelden</button>
+    <div id="login-message" class="message"></div>
+    <div id="login-error" class="error"></div>
+  </form>
+
+  <!-- Geschützte Daten anzeigen -->
+  <ul id="userList"></ul>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
+  import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword
+  } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
+
+  // TODO: Mit deinen Werten ersetzen
+  const firebaseConfig = {
+    apiKey: "AIzaSyDxLjt4rfg5QtTP2PNSMDHjQdBwUHQj9Qs",
+    authDomain: "schoolmatch-6e2f5.firebaseapp.com",
+    projectId: "schoolmatch-6e2f5",
+    storageBucket: "schoolmatch-6e2f5.firebasestorage.app",
+    messagingSenderId: "18888179524",
+    appId: "1:18888179524:web:590c29896eba355592e111",
+  };
+
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  // Tabs wechseln
+  document.getElementById('tab-register').onclick = () => {
+    document.getElementById('form-register').style.display = '';
+    document.getElementById('form-login').style.display = 'none';
+  };
+  document.getElementById('tab-login').onclick = () => {
+    document.getElementById('form-register').style.display = 'none';
+    document.getElementById('form-login').style.display = '';
+  };
+
+  // Registrierung
+  document.getElementById('form-register').onsubmit = async e => {
+    e.preventDefault();
+    const email = document.getElementById('reg-email').value;
+    const pass  = document.getElementById('reg-password').value;
+    document.getElementById('reg-message').textContent = '';
+    document.getElementById('reg-error').textContent = '';
+    try {
+      const userCred = await createUserWithEmailAndPassword(auth, email, pass);
+      document.getElementById('reg-message').textContent = `Registriert: ${userCred.user.email}`;
+    } catch (err) {
+      document.getElementById('reg-error').textContent = err.message;
+    }
+  };
+
+  // Login
+  document.getElementById('form-login').onsubmit = async e => {
+    e.preventDefault();
+    const email = document.getElementById('login-email').value;
+    const pass  = document.getElementById('login-password').value;
+    document.getElementById('login-message').textContent = '';
+    document.getElementById('login-error').textContent = '';
+    try {
+      const userCred = await signInWithEmailAndPassword(auth, email, pass);
+      const token = await userCred.user.getIdToken();
+      localStorage.setItem('jwtToken', token);
+      document.getElementById('login-message').textContent = 'Angemeldet!';
+      fetchProtectedUsers(token);
+    } catch (err) {
+      document.getElementById('login-error').textContent = err.message;
+    }
+  };
+
+  // Geschützte User aus Backend abrufen
+  async function fetchProtectedUsers(token) {
+    try {
+      const res = await fetch('/api/users', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const users = await res.json();
+      const list = document.getElementById('userList');
+      list.innerHTML = '';
+      users.forEach(u => {
+        const li = document.createElement('li');
+        li.textContent = `${u.name} (${u.email}) – Klasse: ${u.klasse}`;
+        list.appendChild(li);
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // Wenn schon eingeloggt, direkt Users laden
+  auth.onAuthStateChanged(async user => {
+    if (user) {
+      const token = await user.getIdToken();
+      fetchProtectedUsers(token);
+    }
+  });
+</script>

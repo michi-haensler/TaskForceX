@@ -1,45 +1,54 @@
 // src/main/java/at/htlle/service/UserService.java
 package at.htlle.SchoolMatch.service;
 
-import at.htlle.SchoolMatch.model.User;
-import at.htlle.SchoolMatch.repository.UserRepository;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import at.htlle.SchoolMatch.model.UserDTO;
+import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.*;
+import com.google.firebase.cloud.FirestoreClient;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 @Service
 public class UserService {
 
-    private final UserRepository repo;
-    private final BCryptPasswordEncoder encoder;
+    private static final String COLLECTION = "users";
 
-    public UserService(UserRepository repo) {
-        this.repo = repo;
-        // Encoder hier initialisieren
-        this.encoder = new BCryptPasswordEncoder();
+    public List<UserDTO> findAll() throws ExecutionException, InterruptedException {
+        Firestore db = FirestoreClient.getFirestore();               // erst hier holen
+        ApiFuture<QuerySnapshot> fut = db.collection(COLLECTION).get();
+        List<UserDTO> list = new ArrayList<>();
+        for (DocumentSnapshot doc : fut.get().getDocuments()) {
+            UserDTO u = doc.toObject(UserDTO.class);
+            u.setId(doc.getId());
+            list.add(u);
+        }
+        return list;
     }
 
-    public List<User> getAllUsers() {
-        return repo.findAll();
+    public UserDTO findById(String id) throws ExecutionException, InterruptedException {
+        Firestore db = FirestoreClient.getFirestore();               // erst hier holen
+        DocumentSnapshot doc = db.collection(COLLECTION).document(id).get().get();
+        return doc.exists() ? doc.toObject(UserDTO.class) : null;
     }
 
-    public Optional<User> getById(Long id) {
-        return repo.findById(id);
+    public UserDTO save(UserDTO user) throws ExecutionException, InterruptedException {
+        Firestore db = FirestoreClient.getFirestore();               // erst hier holen
+        DocumentReference ref;
+        if (user.getId() != null) {
+            ref = db.collection(COLLECTION).document(user.getId());
+            ref.set(user).get();
+        } else {
+            ref = db.collection(COLLECTION).document();
+            ref.set(user).get();
+            user.setId(ref.getId());
+        }
+        return user;
     }
 
-    public User createUser(User user) {
-        // Passwort hashen
-        user.setPassword(encoder.encode(user.getPassword()));
-        return repo.save(user);
-    }
-
-    public void deleteUser(Long id) {
-        repo.deleteById(id);
-    }
-
-    public Optional<User> findByEmail(String email) {
-        return repo.findByEmail(email);
+    public void delete(String id) throws ExecutionException, InterruptedException {
+        Firestore db = FirestoreClient.getFirestore();               // erst hier holen
+        db.collection(COLLECTION).document(id).delete().get();
     }
 }

@@ -1,55 +1,46 @@
 package at.htlle.SchoolMatch.controller;
 
-import at.htlle.SchoolMatch.model.User;
+import at.htlle.SchoolMatch.model.UserDTO;
 import at.htlle.SchoolMatch.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = "*")
+@CrossOrigin
 public class UserController {
 
-    private final UserService service;
+    private final UserService svc;
 
-    public UserController(UserService service) {
-        this.service = service;
+    public UserController(UserService svc) {
+        this.svc = svc;
     }
 
-    // GET /api/users
     @GetMapping
-    public List<User> list() {
-        return service.getAllUsers();
+    public ResponseEntity<List<UserDTO>> list() throws ExecutionException, InterruptedException {
+        return ResponseEntity.ok(svc.findAll());
     }
 
-    // GET /api/users/{id}
     @GetMapping("/{id}")
-    public ResponseEntity<User> get(@PathVariable Long id) {
-        return service.getById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<UserDTO> get(@PathVariable String id)
+            throws ExecutionException, InterruptedException {
+        UserDTO u = svc.findById(id);
+        return u != null ? ResponseEntity.ok(u) : ResponseEntity.notFound().build();
     }
 
-    // POST /api/users
     @PostMapping
-    public ResponseEntity<User> create(@Valid @RequestBody User user) {
-        if (service.findByEmail(user.getEmail()).isPresent()) {
-            return ResponseEntity.badRequest().build();
-        }
-        User saved = service.createUser(user);
+    public ResponseEntity<UserDTO> create(@RequestBody UserDTO u)
+            throws ExecutionException, InterruptedException {
+        UserDTO saved = svc.save(u);
         return ResponseEntity.ok(saved);
     }
 
-    // DELETE /api/users/{id}
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        if (service.getById(id).isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        service.deleteUser(id);
+    public ResponseEntity<Void> delete(@PathVariable String id) throws ExecutionException, InterruptedException {
+        svc.delete(id);
         return ResponseEntity.noContent().build();
     }
 }
